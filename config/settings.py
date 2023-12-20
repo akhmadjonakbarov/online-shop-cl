@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'shop_app',
     'user_app',
     'location_app',
+    'banner_app',
     # installed apps
     'rest_framework',
     'rest_framework_simplejwt',

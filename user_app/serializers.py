@@ -6,15 +6,6 @@ from location_app.serializers import LocationSerializer
 from user_app.models import CustomUser
 
 
-class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
-    def validate(self, attrs):
-        data = super().validate(attrs)
-        serializer = UserSerializerWithToken(self.user).data
-        for k, v in serializer.items():
-            data[k] = v
-        return data
-
-
 class UserSerializerWithToken(serializers.ModelSerializer):
     access = serializers.SerializerMethodField(read_only=True)
     refresh = serializers.SerializerMethodField(read_only=True)
@@ -22,10 +13,11 @@ class UserSerializerWithToken(serializers.ModelSerializer):
     isAdmin = serializers.SerializerMethodField(read_only=True)
     isSuperAdmin = serializers.SerializerMethodField(read_only=True)
     locations = serializers.SerializerMethodField(read_only=True)
+    isSeller = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = CustomUser
-        fields = ('id', 'phonenumber', 'name', 'isAdmin', 'isSuperAdmin', 'access', 'refresh', 'locations')
+        fields = ('id', 'phonenumber', 'name', 'isAdmin', 'isSuperAdmin', 'access', 'refresh', 'locations', 'isSeller')
 
     def get_access(self, user: CustomUser):
         token: Token = RefreshToken.for_user(user)
@@ -37,6 +29,9 @@ class UserSerializerWithToken(serializers.ModelSerializer):
 
     def get_isAdmin(self, user: CustomUser):
         return user.is_staff
+
+    def get_isSeller(self, user: CustomUser):
+        return user.is_seller
 
     def get_name(self, user: CustomUser):
         name = user.first_name

@@ -4,8 +4,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from user_app.serializers import (UserRegisterSerializerWithToken, UserSerializerWithToken,
-                                  UserTokenObtainPairSerializer, )
+from user_app.serializers import (UserRegisterSerializerWithToken, UserSerializerWithToken)
 from .models import CustomUser
 
 
@@ -32,7 +31,7 @@ class UserRegisterView(GenericAPIView):
 
 
 class UserLoginView(GenericAPIView):
-    serializer_class = UserTokenObtainPairSerializer
+    serializer_class = UserSerializerWithToken
 
     def post(self, request):
         user = CustomUser.objects.get(phonenumber=request.data['phonenumber'])

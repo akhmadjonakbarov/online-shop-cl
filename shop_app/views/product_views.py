@@ -6,13 +6,14 @@ from rest_framework import status
 
 
 class ListProductsView(GenericAPIView):
+    permission_classes = (IsAuthenticated,)
     serializer_class = ProductSerializer
     queryset = Product
 
     def get(self, request, format=None):
         products = self.queryset.objects.all()
         serializer = self.serializer_class(products, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
 
 
 class DetailProductView(GenericAPIView):
@@ -22,7 +23,7 @@ class DetailProductView(GenericAPIView):
     def get(self, request, id):
         product = self.queryset.objects.get(id=id)
         serializer = self.serializer_class(product, many=False)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
 
 
 class AddProductView(GenericAPIView):
@@ -34,7 +35,7 @@ class AddProductView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         product = serializer.save()
         serializer = self.serializer_class(product, many=False)
-        return Response(serializer.data)
+        return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
 
 
 class UpdateProductView(GenericAPIView):

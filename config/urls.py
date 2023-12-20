@@ -18,6 +18,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/shop/categories/', include('shop_app.urls.category_urls')),
     path('api/shop/products/', include('shop_app.urls.product_urls')),
+    path('api/banners/', include('banner_app.urls')),
     path('api/user/', include('user_app.urls')),
     path('api/sellers/', include('user_app.seller.urls')),
     path('api/orders/', include('shop_app.urls.order_urls')),

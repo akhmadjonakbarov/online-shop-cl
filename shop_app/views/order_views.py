@@ -15,7 +15,7 @@ class ListOrdersView(GenericAPIView):
         user: CustomUser = request.user
         orders = user.order_set.all()
         serializer = self.serializer_class(orders, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
 
 
 class DetailOrderView(GenericAPIView):
@@ -26,11 +26,12 @@ class DetailOrderView(GenericAPIView):
         user: CustomUser = request.user
         order = user.order_set.get(id=id)
         serializer = self.serializer_class(order, many=False)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
 
 
 class AddOrderView(GenericAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = OrderSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = OrderSerializer(data=request.data)
@@ -41,9 +42,9 @@ class AddOrderView(GenericAPIView):
             serializer.validated_data['total_price'] = total_price
 
             order = serializer.save()
-            return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer = self.serializer_class(order, many=False)
+            return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
+        return Response({'success': 'false', 'data': []}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateOrderView(GenericAPIView):
@@ -57,9 +58,9 @@ class UpdateOrderView(GenericAPIView):
             instance=order, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
+            return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
         else:
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'success': 'false', 'data': serializer.errors}, status=status.HTTP_200_OK)
 
 
 class DeleteOrderView(GenericAPIView):
@@ -73,5 +74,5 @@ class DeleteOrderView(GenericAPIView):
         message = "Order was not deleted"
         if order is not None:
             order.delete()
-            message = "Product was deleted"
-        return Response({'message': message}, status=status.HTTP_200_OK)
+            message = 'Order was deleted'
+        return Response({'success': 'true', 'data': message}, status=status.HTTP_200_OK)
