@@ -5,7 +5,7 @@ from shop_app.serializers.product_serializer import (ProductSerializer, Product)
 from rest_framework import status
 
 
-class GetProductsView(GenericAPIView):
+class ListProductsView(GenericAPIView):
     serializer_class = ProductSerializer
     queryset = Product
 

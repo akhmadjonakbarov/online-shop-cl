@@ -2,6 +2,7 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from user_app.serializers import (UserRegisterSerializerWithToken, UserSerializerWithToken,
                                   UserTokenObtainPairSerializer, )
@@ -13,11 +14,10 @@ class UserRegisterView(GenericAPIView):
 
     def post(self, request):
         data = request.data
-
         try:
             user = CustomUser.objects.create(
                 first_name=data['first_name'],
-                username=data['phonenumber'],
+                phonenumber=data['phonenumber'],
                 password=make_password(str(data['password'])),
 
             )
@@ -35,15 +35,16 @@ class UserLoginView(GenericAPIView):
     serializer_class = UserTokenObtainPairSerializer
 
     def post(self, request):
-        user = CustomUser.objects.get(email=request.data['email'])
+        user = CustomUser.objects.get(phonenumber=request.data['phonenumber'])
         serializer = UserSerializerWithToken(user, many=False)
         return Response(serializer.data)
 
 
 class GetUserView(GenericAPIView):
+    permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializerWithToken
 
     def get(self, request):
-        user = request.user
+        user: CustomUser = request.user
         serializer = self.serializer_class(user, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)

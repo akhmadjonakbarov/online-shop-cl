@@ -25,7 +25,7 @@ class UserSerializerWithToken(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('id', 'email', 'name', 'isAdmin', 'isSuperAdmin', 'access', 'refresh', 'locations')
+        fields = ('id', 'phonenumber', 'name', 'isAdmin', 'isSuperAdmin', 'access', 'refresh', 'locations')
 
     def get_access(self, user: CustomUser):
         token: Token = RefreshToken.for_user(user)
@@ -59,4 +59,4 @@ class UserSerializerWithToken(serializers.ModelSerializer):
 class UserRegisterSerializerWithToken(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('id', 'first_name', 'email', 'password')
+        fields = ('id', 'first_name', 'phonenumber', 'password')
