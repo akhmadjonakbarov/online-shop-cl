@@ -4,14 +4,13 @@ from django.contrib.auth.models import (
 )
 from django.db import models
 
-from location_app.models import Location
+from location_app.models import Region, District
 
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, phonenumber, password=None, **extra_fields):
         if not phonenumber:
             raise ValueError('The Email field must be set')
-        # email = self.normalize_email(phonenumber)
         user = self.model(phonenumber=phonenumber, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -44,10 +43,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class UserLocation(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    region = models.ForeignKey(Region, on_delete=models.CASCADE)
+    district = models.ForeignKey(District, on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(f'{self.user.phonenumber} is from {self.location.name}')
+        return str(f'{self.user.phonenumber} is from {self.region.name}')
 
 
 class SuperAdminGroup(models.Model):

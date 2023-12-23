@@ -15,18 +15,6 @@ class ListSellerView(GenericAPIView):
         return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
 
 
-class DetailSellerView(GenericAPIView):
-    serializer_class = UserSerializerWithToken
-    queryset = CustomUser
-
-    def get(self, request, id):
-        seller = self.queryset.objects.get(id=id)
-        if seller.is_seller is True:
-            serializer = self.serializer_class(seller, many=False)
-            return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
-        return Response({'success': 'true', 'data': 'User is not seller'}, status=status.HTTP_400_BAD_REQUEST)
-
-
 class UpdateSellerView(GenericAPIView):
     serializer_class = UserSerializerWithToken
     queryset = CustomUser

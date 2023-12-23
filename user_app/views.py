@@ -5,7 +5,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from user_app.serializers import (UserSerializerWithToken, LoginSerializer)
-from .models import CustomUser, UserLocation, Location
+from .models import CustomUser, UserLocation
 
 
 class UserRegisterView(GenericAPIView):
@@ -13,21 +13,43 @@ class UserRegisterView(GenericAPIView):
 
     def post(self, request):
         data = request.data
+        global isSeller
+        isSeller = None
+        print(request.data)
         try:
-            user = CustomUser.objects.create(
-                first_name=data['first_name'],
-                phonenumber=data['phonenumber'],
-                is_seller=data['isSeller'],
-                password=make_password(str(data['password'])),
-            )
-            user.save()
-            location = Location.objects.create(name=data['location'])
-            location.save()
-            userLocation = UserLocation.objects.create(user=user, location=location)
-            userLocation.save()
-            serializer = UserSerializerWithToken(user, many=False)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            if request.data['isSeller'] is not None:
+                if request.data['isSeller'] == 'true':
+                    isSeller = True
+                else:
+                    isSeller = False
+            else:
+                isSeller = False
+            if isSeller:
+                user = CustomUser.objects.create(
+                    first_name=data['first_name'],
+                    phonenumber=data['phonenumber'],
+                    is_seller=isSeller,
+                    password=make_password(str(data['password'])),
+                )
+                user.save()
+                userLocation = UserLocation.objects.create(
+                    user=user, region_id=request.data['regionId'],
+                    district_id=request.data['districtId'],
+                )
+                userLocation.save()
+                serializer = UserSerializerWithToken(user, many=False)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                user = CustomUser.objects.create(
+                    first_name=data['first_name'],
+                    phonenumber=data['phonenumber'],
+                    password=make_password(str(data['password'])),
+                )
+                user.save()
+                serializer = UserSerializerWithToken(user, many=False)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as e:
+            print(e)
             message = {'detail': 'User with this phonenumber aready exists'}
             return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
