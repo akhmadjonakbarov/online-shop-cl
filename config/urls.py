@@ -23,6 +23,7 @@ urlpatterns = [
     path('api/user/', include('user_app.urls')),
     path('api/sellers/', include('user_app.seller.urls')),
     path('api/orders/', include('shop_app.urls.order_urls')),
+    path('api/regions/', include('location_app.urls')),
     path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
