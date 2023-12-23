@@ -10,8 +10,9 @@ from user_app.models import CustomUser
 class ListOrdersView(GenericAPIView):
     serializer_class = OrderSerializer
     queryset = Order
+    permission_classes = (IsAuthenticated,)
 
-    def get(self, request, format=None):
+    def get(self, request):
         user: CustomUser = request.user
         orders = user.order_set.all()
         serializer = self.serializer_class(orders, many=True)
@@ -21,6 +22,7 @@ class ListOrdersView(GenericAPIView):
 class DetailOrderView(GenericAPIView):
     serializer_class = OrderSerializer
     queryset = Order
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, id):
         user: CustomUser = request.user
@@ -30,7 +32,7 @@ class DetailOrderView(GenericAPIView):
 
 
 class AddOrderView(GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, ]
     serializer_class = OrderSerializer
 
     def post(self, request, *args, **kwargs):
@@ -44,13 +46,13 @@ class AddOrderView(GenericAPIView):
             order = serializer.save()
             serializer = self.serializer_class(order, many=False)
             return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
-        return Response({'success': 'false', 'data': []}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'success': 'false', 'data': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateOrderView(GenericAPIView):
     serializer_class = OrderSerializer
     queryset = Order
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated, ]
 
     def patch(self, request, id):
         order = self.queryset.objects.get(id=id)
@@ -75,4 +77,5 @@ class DeleteOrderView(GenericAPIView):
         if order is not None:
             order.delete()
             message = 'Order was deleted'
-        return Response({'success': 'true', 'data': message}, status=status.HTTP_200_OK)
+            return Response({'success': 'true', 'data': message}, status=status.HTTP_200_OK)
+        return Response({'success': 'true', 'data': message}, status=status.HTTP_400_BAD_REQUEST)

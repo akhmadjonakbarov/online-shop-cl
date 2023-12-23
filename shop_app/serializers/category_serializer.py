@@ -8,9 +8,9 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('id', 'name', 'about', 'image', 'products')
+        fields = ('id', 'name', 'image', 'products')
 
     def get_products(self, category: Category):
-        products = category.set_products_category.all()
+        products = category.product_set.all()
         serializer = ProductSerializer(products, many=True)
         return serializer.data

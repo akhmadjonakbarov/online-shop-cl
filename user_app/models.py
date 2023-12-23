@@ -11,7 +11,7 @@ class CustomUserManager(BaseUserManager):
     def create_user(self, phonenumber, password=None, **extra_fields):
         if not phonenumber:
             raise ValueError('The Email field must be set')
-        email = self.normalize_email(phonenumber)
+        # email = self.normalize_email(phonenumber)
         user = self.model(phonenumber=phonenumber, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -31,6 +31,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_seller = models.BooleanField(default=False)
+    is_delete = models.BooleanField(default=False)
 
     objects = CustomUserManager()
 

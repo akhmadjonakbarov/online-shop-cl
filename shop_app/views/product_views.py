@@ -10,7 +10,7 @@ class ListProductsView(GenericAPIView):
     serializer_class = ProductSerializer
     queryset = Product
 
-    def get(self, request, format=None):
+    def get(self, request):
         products = self.queryset.objects.all()
         serializer = self.serializer_class(products, many=True)
         return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
@@ -28,7 +28,7 @@ class DetailProductView(GenericAPIView):
 
 class AddProductView(GenericAPIView):
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
@@ -41,7 +41,7 @@ class AddProductView(GenericAPIView):
 class UpdateProductView(GenericAPIView):
     serializer_class = ProductSerializer
     queryset = Product
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = (IsAuthenticated,)
 
     def patch(self, request, id):
         product = self.queryset.objects.get(id=id)
@@ -49,15 +49,15 @@ class UpdateProductView(GenericAPIView):
             instance=product, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
+            return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
         else:
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'success': 'false', 'data': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DeleteProductView(GenericAPIView):
     serializer_class = ProductSerializer
     queryset = Product
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = (IsAuthenticated,)
 
     def delete(self, request, id):
         product = self.queryset.objects.get(id=id)
