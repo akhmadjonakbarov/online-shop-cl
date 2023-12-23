@@ -1,8 +1,19 @@
 from rest_framework import serializers
-from .models import Location
+from .models import Region, District
 
 
-class LocationSerializer(serializers.ModelSerializer):
+class DistrictSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Location
-        fields = '__all__'
+        model = District
+        fields = ('id', 'name')
+
+
+class RegionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Region
+        fields = ('id', 'name')
+
+    # def get_district(self, region: Region):
+    #     districts = region.district_set.all()
+    #     serializer = DistrictSerializer(districts, many=True)
+    #     return serializer.data
