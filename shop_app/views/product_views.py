@@ -11,7 +11,7 @@ class ListProductsView(GenericAPIView):
     queryset = Product
 
     def get(self, request):
-        products = self.queryset.objects.all()
+        products = self.queryset.objects.filter(is_delete=False)
         serializer = self.serializer_class(products, many=True)
         return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
 
@@ -63,6 +63,8 @@ class DeleteProductView(GenericAPIView):
         product = self.queryset.objects.get(id=id)
         message = "Product was not deleted"
         if product is not None:
-            product.delete()
+            product.is_delete = True
+            product.save()
             message = "Product was deleted"
+            return Response({'message': message}, status=status.HTTP_200_OK)
         return Response({'message': message}, status=status.HTTP_200_OK)

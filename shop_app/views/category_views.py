@@ -30,6 +30,17 @@ class AddCategoryView(GenericAPIView):
         return Response(serializer.data)
 
 
+class DetailCategoryView(GenericAPIView):
+    serializer_class = CategorySerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Category
+
+    def get(self, request, id):
+        category = self.queryset.objects.get(id=id, is_delete=False)
+        serializer = self.serializer_class(category, many=False)
+        return Response({'success': 'true', 'data': serializer.data, }, status=status.HTTP_200_OK)
+
+
 class UpdateCategoryView(GenericAPIView):
     serializer_class = CategorySerializer
     queryset = Category
@@ -58,3 +69,9 @@ class DeleteCategoryView(GenericAPIView):
             category.isDeleted = True
             category.save()
         return Response({'success': 'true', 'message': message, }, status=status.HTTP_200_OK)
+
+
+class AddSellerCategory(GenericAPIView):
+
+    def post(self, request):
+        pass
