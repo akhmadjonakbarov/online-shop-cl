@@ -50,7 +50,7 @@ class UserRegisterView(GenericAPIView):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as e:
             print(e)
-            message = {'detail': 'User with this phonenumber aready exists'}
+            message = {'message': 'User with this phonenumber aready exists'}
             return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -71,13 +71,14 @@ class UserLoginView(GenericAPIView):
                         serializer = self.serializer_class(user, many=False)
                         return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
                     else:
-                        return Response({'error': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
+                        return Response({'message': 'Invalid username or password'},
+                                        status=status.HTTP_401_UNAUTHORIZED)
                 else:
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response({'data': 'User was deleted'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message': 'User was deleted'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({'data': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetUserView(GenericAPIView):

@@ -13,7 +13,7 @@ class ListCategoriesView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        categories = self.queryset.objects.filter(isDeleted=False)
+        categories = self.queryset.objects.filter(is_delete=False)
         serializer = self.serializer_class(categories, many=True)
         return Response({'success': 'true', 'data': serializer.data, }, status=status.HTTP_200_OK)
 
