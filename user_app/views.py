@@ -9,7 +9,6 @@ from .models import CustomUser, UserLocation
 
 
 class UserRegisterView(GenericAPIView):
-    serializer_class = UserSerializerWithToken
 
     def post(self, request):
         data = request.data
