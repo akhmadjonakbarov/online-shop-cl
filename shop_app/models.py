@@ -74,6 +74,7 @@ class OrderItem(models.Model):
 class SellerCategory(models.Model):
     seller = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=False)
 
     def __str__(self):
-        return str(self.user.first_name)
+        return str(self.seller.first_name)

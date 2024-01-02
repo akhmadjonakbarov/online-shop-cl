@@ -1,10 +1,13 @@
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import (IsAdminUser, IsAuthenticated)
+
+from shop_app.models import SellerCategory
 from shop_app.serializers.category_serializer import (
-    CategorySerializer, Category,
+    CategorySerializer, Category, SellerCategorySerializer, SellerSerializer
 )
 from rest_framework import status
+from user_app.models import CustomUser
 
 
 class ListCategoriesView(GenericAPIView):
@@ -71,7 +74,23 @@ class DeleteCategoryView(GenericAPIView):
         return Response({'success': 'true', 'message': message, }, status=status.HTTP_200_OK)
 
 
-class AddSellerCategory(GenericAPIView):
+class AddSellerCategoryView(GenericAPIView):
+    serializer_class = SellerCategorySerializer
 
     def post(self, request):
-        pass
+        user = CustomUser.objects.get(id=request.data['userId'])
+        category = Category.objects.get(id=request.data['categoryId'])
+        sellerCategory = SellerCategory.objects.create(seller=user, category=category)
+        sellerCategory.save()
+        serializer = self.serializer_class(sellerCategory, many=False)
+        return Response({'success': 'true', 'data': serializer.data, }, status=status.HTTP_200_OK)
+
+
+class ListSellerCategoryView(GenericAPIView):
+    serializer_class = SellerCategorySerializer
+
+    def post(self, request):
+        seller: CustomUser = request.user
+        sellerCategories = SellerCategory.objects.filter(seller=seller)
+        serializer = self.serializer_class(sellerCategories, many=True)
+        return Response({'success': 'true', 'data': serializer.data, }, status=status.HTTP_200_OK)
