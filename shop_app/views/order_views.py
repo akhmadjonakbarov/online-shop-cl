@@ -15,9 +15,9 @@ class ListOrdersView(GenericAPIView):
     def get(self, request):
         user: CustomUser = request.user
         if user.is_seller:
-            orders = user.set_seller_orders.get(id=id)
+            orders = user.set_seller_orders.all()
         else:
-            orders = user.set_user_orders.get(id=id)
+            orders = user.set_seller_orders.all()
         serializer = self.serializer_class(orders, many=True)
         return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
 
