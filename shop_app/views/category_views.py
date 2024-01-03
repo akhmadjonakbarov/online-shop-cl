@@ -4,7 +4,7 @@ from rest_framework.permissions import (IsAdminUser, IsAuthenticated)
 
 from shop_app.models import SellerCategory
 from shop_app.serializers.category_serializer import (
-    CategorySerializer, Category, SellerCategorySerializer, SellerSerializer
+    CategorySerializer, Category, SellerCategorySerializer,
 )
 from rest_framework import status
 from user_app.models import CustomUser
@@ -76,11 +76,13 @@ class DeleteCategoryView(GenericAPIView):
 
 class AddSellerCategoryView(GenericAPIView):
     serializer_class = SellerCategorySerializer
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        user = CustomUser.objects.get(id=request.data['userId'])
-        category = Category.objects.get(id=request.data['categoryId'])
-        sellerCategory = SellerCategory.objects.create(seller=user, category=category)
+        user: CustomUser = request.user
+        categoryId = request.data['categoryId']
+        category = Category.objects.get(id=categoryId)
+        sellerCategory = SellerCategory.objects.create(seller=user, category=category, is_active=True)
         sellerCategory.save()
         serializer = self.serializer_class(sellerCategory, many=False)
         return Response({'success': 'true', 'data': serializer.data, }, status=status.HTTP_200_OK)
@@ -88,8 +90,9 @@ class AddSellerCategoryView(GenericAPIView):
 
 class ListSellerCategoryView(GenericAPIView):
     serializer_class = SellerCategorySerializer
+    permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def get(self, request):
         seller: CustomUser = request.user
         sellerCategories = SellerCategory.objects.filter(seller=seller)
         serializer = self.serializer_class(sellerCategories, many=True)

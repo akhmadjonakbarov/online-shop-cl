@@ -16,10 +16,12 @@ class ListOrdersView(GenericAPIView):
         user: CustomUser = request.user
         if user.is_seller:
             orders = user.set_seller_orders.all()
+            serializer = self.serializer_class(orders, many=True)
+            return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
         else:
-            orders = user.set_seller_orders.all()
-        serializer = self.serializer_class(orders, many=True)
-        return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
+            orders = user.set_user_orders.all()
+            serializer = self.serializer_class(orders, many=True)
+            return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
 
 
 class DetailOrderView(GenericAPIView):

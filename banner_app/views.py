@@ -17,3 +17,23 @@ class ListBannerView(GenericAPIView):
         banners = self.queryset.objects.all()
         serializer = self.serializer_class(banners, many=True)
         return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+
+class BannerAddView(GenericAPIView):
+    def post(self, request, *args, **kwargs):
+        serializer = BannerSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class BannerDeleteView(GenericAPIView):
+    def delete(self, request, id):
+        try:
+            banner = Banner.objects.get(id=id)
+        except Banner.DoesNotExist:
+            return Response({'error': 'Banner not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        banner.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
