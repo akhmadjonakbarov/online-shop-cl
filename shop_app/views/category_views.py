@@ -94,6 +94,6 @@ class ListSellerCategoryView(GenericAPIView):
 
     def get(self, request):
         seller: CustomUser = request.user
-        sellerCategories = SellerCategory.objects.filter(seller=seller)
+        sellerCategories = SellerCategory.objects.filter(seller=seller, is_active=True)
         serializer = self.serializer_class(sellerCategories, many=True)
         return Response({'success': 'true', 'data': serializer.data, }, status=status.HTTP_200_OK)

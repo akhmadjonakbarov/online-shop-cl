@@ -37,4 +37,4 @@ class DeleteSellerView(GenericAPIView):
         seller = self.queryset.objects.get(id=id)
         seller.is_delete = True
         seller.save()
-        Response({'success': 'true', 'message': 'Seller was deleted', }, status=status.HTTP_200_OK)
+        return Response({'success': 'true', 'message': 'Seller was deleted', }, status=status.HTTP_200_OK)
