@@ -11,7 +11,7 @@ class ListProductsView(GenericAPIView):
     queryset = Product
 
     def get(self, request):
-        products = self.queryset.objects.filter(is_delete=False)
+        products = self.queryset.objects.all()
         serializer = self.serializer_class(products, many=True)
         return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
 
@@ -60,11 +60,12 @@ class DeleteProductView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
 
     def delete(self, request, id):
+
         product = self.queryset.objects.get(id=id)
         message = "Product was not deleted"
+        # Delete the category
         if product is not None:
-            product.is_delete = True
-            product.save()
+            product.delete()
             message = "Product was deleted"
-            return Response({'message': message}, status=status.HTTP_200_OK)
-        return Response({'message': message}, status=status.HTTP_200_OK)
+            return Response({'success': 'true', 'message': message}, status=status.HTTP_200_OK)
+        return Response({'success': 'true', 'message': message}, status=status.HTTP_200_OK)

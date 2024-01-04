@@ -16,7 +16,7 @@ class ListCategoriesView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        categories = self.queryset.objects.filter(is_delete=False)
+        categories = self.queryset.objects.all()
         serializer = self.serializer_class(categories, many=True)
         return Response({'success': 'true', 'data': serializer.data, }, status=status.HTTP_200_OK)
 
@@ -66,12 +66,15 @@ class DeleteCategoryView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
 
     def delete(self, request, id):
-        category = self.queryset.objects.get(id=id)
-        message = "Product was not deleted"
-        if category is not None:
-            category.isDeleted = True
-            category.save()
-        return Response({'success': 'true', 'message': message, }, status=status.HTTP_200_OK)
+        # Get the category instance
+        category = Category.objects.get(id=id)
+
+        # Delete the category
+        category.delete()
+
+        # Respond with a success message
+        return Response({"success": "true", "message": "Category deleted successfully"},
+                        status=status.HTTP_200_OK)
 
 
 class AddSellerCategoryView(GenericAPIView):
