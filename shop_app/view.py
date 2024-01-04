@@ -2,11 +2,12 @@ from rest_framework.response import Response
 from banner_app.serializers import Banner, BannerSerializer
 from shop_app.serializers.category_serializer import Category, CategorySerializer, ProductSerializer
 from rest_framework.generics import GenericAPIView
+from rest_framework.views import APIView
 from rest_framework import status
 
 
 # Create your views here.
-class HomeView(GenericAPIView):
+class HomeView(APIView):
 
     def get(self, request):
         products = []

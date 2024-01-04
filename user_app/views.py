@@ -9,12 +9,12 @@ from .models import CustomUser, UserLocation
 
 
 class UserRegisterView(GenericAPIView):
+    serializer_class = UserSerializerWithToken
 
     def post(self, request):
         data = request.data
         global isSeller
         isSeller = None
-        print(request.data)
         try:
             if request.data['isSeller'] is not None:
                 if request.data['isSeller'] == 'true':
@@ -36,7 +36,7 @@ class UserRegisterView(GenericAPIView):
                     district_id=request.data['districtId'],
                 )
                 userLocation.save()
-                serializer = UserSerializerWithToken(user, many=False)
+                serializer = self.serializer_class(user, many=False)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
                 user = CustomUser.objects.create(
@@ -45,7 +45,7 @@ class UserRegisterView(GenericAPIView):
                     password=make_password(str(data['password'])),
                 )
                 user.save()
-                serializer = UserSerializerWithToken(user, many=False)
+                serializer = self.serializer_class(user, many=False)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception as e:
             print(e)

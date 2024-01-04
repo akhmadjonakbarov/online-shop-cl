@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
+from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -19,7 +20,7 @@ class ListBannerView(GenericAPIView):
         return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
 
 
-class BannerAddView(GenericAPIView):
+class BannerAddView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = BannerSerializer(data=request.data)
         if serializer.is_valid():
@@ -28,7 +29,7 @@ class BannerAddView(GenericAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class BannerDeleteView(GenericAPIView):
+class BannerDeleteView(APIView):
     def delete(self, request, id):
         try:
             banner = Banner.objects.get(id=id)

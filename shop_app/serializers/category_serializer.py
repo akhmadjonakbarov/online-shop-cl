@@ -18,7 +18,7 @@ class CategorySerializer(serializers.ModelSerializer):
         return serializer.data
 
 
-class _CategorySerializer(serializers.ModelSerializer):
+class CategorySerializerWithOnlyName(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ('id', 'name')
@@ -27,7 +27,7 @@ class _CategorySerializer(serializers.ModelSerializer):
 class SellerCategorySerializer(serializers.ModelSerializer):
     seller = SellerSerializer(many=False)
 
-    category = _CategorySerializer(many=False)
+    category = CategorySerializerWithOnlyName(many=False)
 
     class Meta:
         model = SellerCategory
