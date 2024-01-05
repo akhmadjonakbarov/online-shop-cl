@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
@@ -35,6 +34,5 @@ class BannerDeleteView(APIView):
             banner = Banner.objects.get(id=id)
         except Banner.DoesNotExist:
             return Response({'error': 'Banner not found'}, status=status.HTTP_404_NOT_FOUND)
-
         banner.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({'message': 'Banner was deleted', 'success': 'true'}, status=status.HTTP_200_OK)
