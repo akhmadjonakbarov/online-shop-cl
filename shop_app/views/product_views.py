@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from shop_app.serializers.product_serializer import (ProductSerializer, Product)
 from rest_framework import status
+from shop_app.models import Category
 
 
 class ListProductsView(GenericAPIView):
@@ -29,13 +30,22 @@ class DetailProductView(GenericAPIView):
 class AddProductView(GenericAPIView):
     serializer_class = ProductSerializer
     permission_classes = (IsAuthenticated,)
+    queryset = Product
 
     def post(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        product = serializer.save()
-        serializer = self.serializer_class(product, many=False)
-        return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
+        try:
+            user = request.user
+            category = Category.objects.get(id=request.data['category'])
+            product = Product.objects.create(
+                user=user, category=category, name=request.data['name'],
+                description=request.data['description'],
+                price=request.data['price'], coverImage=request.data['coverImage']
+            )
+            product.save()
+            serializer = self.serializer_class(product, many=False)
+            return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'message': f'{e}'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateProductView(GenericAPIView):
@@ -60,7 +70,6 @@ class DeleteProductView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
 
     def delete(self, request, id):
-
         product = self.queryset.objects.get(id=id)
         message = "Product was not deleted"
         # Delete the category
