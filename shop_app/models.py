@@ -19,7 +19,7 @@ class Product(models.Model):
         Category, on_delete=models.CASCADE)
     name = models.CharField(max_length=250)
     description = models.TextField()
-    coverImage = models.ImageField(upload_to="productImages/")
+    coverImage = models.TextField()
     price = models.DecimalField(max_digits=7, decimal_places=2)
     rating = models.DecimalField(max_digits=7, decimal_places=2, default=0.0)
     createdAt = models.DateTimeField(auto_now_add=True)
@@ -33,6 +33,8 @@ class ProductImage(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="set_images", blank=True, null=True)
     image = models.ImageField(upload_to=f"productImages/{product.name}")
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
         return f"Picture of {self.product.name}"
@@ -44,6 +46,8 @@ class Review(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name='set_reviews_product')
     comment = models.TextField()
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
         return str(f"{self.user}'s comment")
@@ -73,6 +77,8 @@ class SellerCategory(models.Model):
     seller = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=False)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.seller.first_name)
