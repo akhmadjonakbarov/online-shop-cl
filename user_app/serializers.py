@@ -2,7 +2,6 @@ from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken, Token
 
 from user_app.models import CustomUser
-from shop_app.serializers.order_serializer import OrderSerializer
 
 
 class LoginSerializer(serializers.Serializer):
@@ -40,6 +39,20 @@ class UserSerializerWithToken(serializers.ModelSerializer):
 
     def get_isAdmin(self, user: CustomUser):
         return user.is_staff
+
+
+class UserSerializerWithName(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ('id', 'phonenumber', 'name')
+
+    def get_name(self, user: CustomUser):
+        name = user.first_name
+        if name == '':
+            name = user.phonenumber
+        return name
 
 
 class SellerSerializer(serializers.ModelSerializer):

@@ -1,15 +1,17 @@
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
-from shop_app.serializers.order_serializer import (OrderSerializer, OrderItemSerializer, Order, OrderItem)
+
+from shop_app.models import Product
+from shop_app.serializers.order_serializer import (OrderItemSerializer, OrderItem)
 from rest_framework import status
 
 from user_app.models import CustomUser
 
 
 class ListOrdersView(GenericAPIView):
-    serializer_class = OrderSerializer
-    queryset = Order
+    serializer_class = OrderItemSerializer
+    queryset = OrderItem
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
@@ -25,8 +27,8 @@ class ListOrdersView(GenericAPIView):
 
 
 class DetailOrderView(GenericAPIView):
-    serializer_class = OrderSerializer
-    queryset = Order
+    serializer_class = OrderItemSerializer
+    queryset = OrderItem
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, id):
@@ -40,26 +42,27 @@ class DetailOrderView(GenericAPIView):
 
 
 class AddOrderView(GenericAPIView):
+    serializer_class = OrderItemSerializer
+    queryset = OrderItem
     permission_classes = [IsAuthenticated, ]
-    serializer_class = OrderSerializer
 
     def post(self, request, *args, **kwargs):
-        serializer = OrderSerializer(data=request.data)
-
-        if serializer.is_valid():
-            # Calculate total_price based on product prices or any logic you need
-            total_price = sum(product['price'] for product in serializer.validated_data['products'])
-            serializer.validated_data['total_price'] = total_price
-
-            order = serializer.save()
-            serializer = self.serializer_class(order, many=False)
-            return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
-        return Response({'success': 'false', 'data': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        user: CustomUser = request.user
+        seller = CustomUser.objects.get(id=request.data['sellerId'], is_seller=True)
+        product = Product.objects.get(id=request.data['productId'])
+        total_sum = product.price * int(request.data['quantity'])
+        order_item = OrderItem.objects.create(
+            product_id=request.data['productId'], quantity=request.data['quantity'],
+            total_sum=total_sum, user=user, seller=seller
+        )
+        order_item.save()
+        serializer = self.serializer_class(order_item)
+        return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateOrderView(GenericAPIView):
-    serializer_class = OrderSerializer
-    queryset = Order
+    serializer_class = OrderItemSerializer
+    queryset = OrderItem
     permission_classes = [IsAuthenticated, ]
 
     def patch(self, request, id):
@@ -74,13 +77,13 @@ class UpdateOrderView(GenericAPIView):
 
 
 class DeleteOrderView(GenericAPIView):
-    serializer_class = OrderSerializer
-    queryset = Order
+    serializer_class = OrderItemSerializer
+    queryset = OrderItem
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     def delete(self, request, id):
         user: CustomUser = request.user
-        order = user.order_set.get(id=id)
+        order = user.set_user_orders.get(id=id)
         message = "Order was not deleted"
         if order is not None:
             order.delete()

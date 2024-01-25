@@ -10,7 +10,7 @@ from location_app.models import Region, District
 class CustomUserManager(BaseUserManager):
     def create_user(self, phonenumber, password=None, **extra_fields):
         if not phonenumber:
-            raise ValueError('The Email field must be set')
+            raise ValueError('The Phonenumber field must be set')
         user = self.model(phonenumber=phonenumber, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -31,6 +31,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_seller = models.BooleanField(default=False)
     is_delete = models.BooleanField(default=False)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
 
     objects = CustomUserManager()
 
@@ -45,6 +47,8 @@ class UserLocation(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     region = models.ForeignKey(Region, on_delete=models.CASCADE)
     district = models.ForeignKey(District, on_delete=models.CASCADE)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(f'{self.user.phonenumber} is from {self.region.name}')
@@ -53,6 +57,8 @@ class UserLocation(models.Model):
 class SuperAdminGroup(models.Model):
     name = models.CharField(max_length=50, unique=True)
     users = models.ManyToManyField(CustomUser, related_name='superadmin_group')
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.name)
@@ -61,6 +67,8 @@ class SuperAdminGroup(models.Model):
 class AdminGroup(models.Model):
     name = models.CharField(max_length=50, unique=True)
     users = models.ManyToManyField(CustomUser, related_name='admin_group')
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.name)

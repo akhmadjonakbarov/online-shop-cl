@@ -2,11 +2,11 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from user_app.models import CustomUser
-from user_app.serializers import UserSerializerWithToken
+from user_app.serializers import UserSerializerWithName
 
 
 class ListSellerView(GenericAPIView):
-    serializer_class = UserSerializerWithToken
+    serializer_class = UserSerializerWithName
     queryset = CustomUser
 
     def get(self, request):
@@ -16,7 +16,7 @@ class ListSellerView(GenericAPIView):
 
 
 class UpdateSellerView(GenericAPIView):
-    serializer_class = UserSerializerWithToken
+    serializer_class = UserSerializerWithName
     queryset = CustomUser
 
     def patch(self, request, id):

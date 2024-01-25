@@ -53,24 +53,14 @@ class Review(models.Model):
         return str(f"{self.user}'s comment")
 
 
-class Order(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='set_user_orders')
-    products = models.ManyToManyField(Product)
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
-    seller = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='set_seller_orders')
-
-    def __str__(self):
-        return str(f'{self.user.phonenumber}\'s order')
-
-
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='set_user_orders')
+    seller = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='set_seller_orders')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
-    item_price = models.DecimalField(max_digits=10, decimal_places=2)
-
-    def __str__(self):
-        return str(self.order)
+    total_sum = models.DecimalField(max_digits=10, decimal_places=2)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
 
 
 class SellerCategory(models.Model):
