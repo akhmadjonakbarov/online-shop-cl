@@ -4,12 +4,12 @@ from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from user_app.serializers import (UserSerializerWithName, LoginSerializer)
+from user_app.serializers import (UserSerializerWithToken, LoginSerializer)
 from .models import CustomUser, UserLocation
 
 
 class UserRegisterView(GenericAPIView):
-    serializer_class = UserSerializerWithName
+    serializer_class = UserSerializerWithToken
 
     def post(self, request):
         data = request.data
@@ -54,7 +54,7 @@ class UserRegisterView(GenericAPIView):
 
 
 class UserLoginView(GenericAPIView):
-    serializer_class = UserSerializerWithName
+    serializer_class = UserSerializerWithToken
     queryset = CustomUser
 
     def post(self, request):
@@ -82,7 +82,7 @@ class UserLoginView(GenericAPIView):
 
 class GetUserView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
-    serializer_class = UserSerializerWithName
+    serializer_class = UserSerializerWithToken
 
     def get(self, request):
         user: CustomUser = request.user
