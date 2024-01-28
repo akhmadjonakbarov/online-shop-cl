@@ -20,12 +20,10 @@ class ReviewSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     category = _CategorySerializer()
 
-    images = serializers.SerializerMethodField(read_only=True)
-
     class Meta:
         model = Product
         fields = (
             'id', 'category', 'name',
             'description', 'price', 'rating',
-            'coverImage', 'images',
+            'coverImage',
         )
