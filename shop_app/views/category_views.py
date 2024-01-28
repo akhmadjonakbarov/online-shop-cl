@@ -106,7 +106,7 @@ class DeleteSellerCategoryView(GenericAPIView):
     serializer_class = SellerCategorySerializer
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, seller_category_id):
+    def delete(self, request, seller_category_id):
         try:
             seller_category = SellerCategory.objects.get(id=seller_category_id)
             seller_category.delete()
