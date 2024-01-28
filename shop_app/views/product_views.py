@@ -35,7 +35,7 @@ class AddProductView(GenericAPIView):
     def post(self, request):
         try:
             user = request.user
-            category = Category.objects.get(id=request.data['category'])
+            category = Category.objects.get(id=request.data['categoryId'])
             product = Product.objects.create(
                 user=user, category=category, name=request.data['name'],
                 description=request.data['description'],
