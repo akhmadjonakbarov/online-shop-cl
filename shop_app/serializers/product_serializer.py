@@ -1,6 +1,6 @@
 from shop_app.models import (
     Category, Product,
-    ProductImage, Review
+    Review
 )
 from rest_framework import serializers
 
@@ -17,12 +17,6 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ProductImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductImage
-        fields = '__all__'
-
-
 class ProductSerializer(serializers.ModelSerializer):
     category = _CategorySerializer()
 
@@ -35,8 +29,3 @@ class ProductSerializer(serializers.ModelSerializer):
             'description', 'price', 'rating',
             'coverImage', 'images',
         )
-
-    def get_images(self, product: Product):
-        images = product.set_images.all()
-        serializer = ProductSerializer(images, many=True)
-        return serializer.data

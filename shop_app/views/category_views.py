@@ -100,3 +100,17 @@ class ListSellerCategoryView(GenericAPIView):
         sellerCategories = SellerCategory.objects.filter(seller=seller, is_active=True)
         serializer = self.serializer_class(sellerCategories, many=True)
         return Response({'success': 'true', 'data': serializer.data, }, status=status.HTTP_200_OK)
+
+
+class DeleteSellerCategoryView(GenericAPIView):
+    serializer_class = SellerCategorySerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, seller_category_id):
+        try:
+            seller_category = SellerCategory.objects.get(id=seller_category_id)
+            seller_category.delete()
+            return Response({'success': 'true', 'data': 'Category was deleted', }, status=status.HTTP_200_OK)
+        except SellerCategory.DoesNotExist:
+            return Response({'success': 'false', 'message': 'Category does not exist', },
+                            status=status.HTTP_400_BAD_REQUEST)

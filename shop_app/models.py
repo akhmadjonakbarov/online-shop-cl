@@ -29,17 +29,6 @@ class Product(models.Model):
         return str(self.name)
 
 
-class ProductImage(models.Model):
-    product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name="set_images", blank=True, null=True)
-    image = models.ImageField(upload_to=f"productImages/{product.name}")
-    createdAt = models.DateTimeField(auto_now_add=True)
-    updatedAt = models.DateTimeField(auto_now=True)
-
-    def __str__(self) -> str:
-        return f"Picture of {self.product.name}"
-
-
 class Review(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name='set_reviews_user')
