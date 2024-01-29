@@ -93,13 +93,19 @@ class AddSellerCategoryView(GenericAPIView):
 
 class ListSellerCategoryView(GenericAPIView):
     serializer_class = SellerCategorySerializer
-    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        seller: CustomUser = request.user
-        sellerCategories = SellerCategory.objects.filter(seller=seller, is_active=True)
-        serializer = self.serializer_class(sellerCategories, many=True)
-        return Response({'success': 'true', 'data': serializer.data, }, status=status.HTTP_200_OK)
+        if request.user.is_authenticated:
+            print("success")
+            seller: CustomUser = request.user
+            sellerCategories = SellerCategory.objects.filter(seller=seller, is_active=True)
+            serializer = self.serializer_class(sellerCategories, many=True)
+            return Response({'success': 'true', 'data': serializer.data, }, status=status.HTTP_200_OK)
+        else:
+            print("user not found")
+            sellerCategories = SellerCategory.objects.filter(is_active=True)
+            serializer = self.serializer_class(sellerCategories, many=True)
+            return Response({'success': 'true', 'data': serializer.data, }, status=status.HTTP_200_OK)
 
 
 class DeleteSellerCategoryView(GenericAPIView):

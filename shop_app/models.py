@@ -16,7 +16,7 @@ class Product(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="set_products_user")
     category = models.ForeignKey(
-        Category, on_delete=models.CASCADE)
+        'SellerCategory', on_delete=models.CASCADE)
     name = models.CharField(max_length=250)
     description = models.TextField()
     coverImage = models.TextField()

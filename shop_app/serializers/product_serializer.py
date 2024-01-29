@@ -1,14 +1,14 @@
 from shop_app.models import (
     Category, Product,
-    Review
+    Review, SellerCategory
 )
 from rest_framework import serializers
 
 
-class _CategorySerializer(serializers.ModelSerializer):
+class _SellerCategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Category
-        fields = ('id', 'name')
+        model = SellerCategory
+        fields = ('id', 'seller', 'category')
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -18,7 +18,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = _CategorySerializer()
+    category = _SellerCategorySerializer()
 
     class Meta:
         model = Product
