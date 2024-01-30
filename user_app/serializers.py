@@ -2,6 +2,17 @@ from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken, Token
 
 from user_app.models import CustomUser
+from user_app.models import UserLocation
+from location_app.serializers import DistrictSerializer, RegionSerializer
+
+
+class UserLocationSerializer(serializers.ModelSerializer):
+    region = RegionSerializer(read_only=True)
+    district = DistrictSerializer(read_only=True)
+
+    class Meta:
+        model = UserLocation
+        fields = ['region', 'district']
 
 
 class LoginSerializer(serializers.Serializer):
@@ -15,10 +26,11 @@ class UserSerializerWithToken(serializers.ModelSerializer):
     name = serializers.SerializerMethodField(read_only=True)
     isAdmin = serializers.SerializerMethodField(read_only=True)
     isSeller = serializers.SerializerMethodField(read_only=True)
+    location = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = CustomUser
-        fields = ('id', 'phonenumber', 'name', 'isSeller', 'isAdmin', 'access', 'refresh')
+        fields = ('id', 'phonenumber', 'name', 'isSeller', 'isAdmin', 'access', 'refresh', 'location')
 
     def get_access(self, user: CustomUser):
         token: Token = RefreshToken.for_user(user)
@@ -39,6 +51,17 @@ class UserSerializerWithToken(serializers.ModelSerializer):
 
     def get_isAdmin(self, user: CustomUser):
         return user.is_staff
+
+    def get_location(self, user: CustomUser):
+        user_location = UserLocation.objects.get(user=user)
+        serializer = UserLocationSerializer(user_location, many=False)
+        return serializer.data
+
+
+class UpdateUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('id', 'phonenumber', 'name')
 
 
 class UserSerializerWithName(serializers.ModelSerializer):
