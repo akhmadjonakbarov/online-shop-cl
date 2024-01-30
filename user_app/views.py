@@ -94,21 +94,21 @@ class UpdateUserView(GenericAPIView):
         user: CustomUser = request.user
 
         # Ensure that 'phone_number' and 'name' are present in the request data
-        phone_number = request.data.get('phone_number')
-        name = request.data.get('first_name')
+        phone_number = request.data.get('phonenumber')
+        first_name = request.data.get('first_name')
 
         # Update user fields individually if they are provided
         if phone_number is not None:
             user.phone_number = phone_number
-        if name is not None:
-            user.first_name = name
+        if first_name is not None:
+            user.first_name = first_name
 
         # Save the user object
         user.save()
 
         # Remove 'name' from the request data before passing it to the serializer
         user_data = request.data.copy()
-        user_data.pop('name', None)
+        user_data.pop('first_name', None)
 
         # Use the serializer to update the remaining fields
         serializer = UserSerializerWithToken(user, data=user_data, partial=True)

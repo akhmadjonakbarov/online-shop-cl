@@ -61,7 +61,7 @@ class UserSerializerWithToken(serializers.ModelSerializer):
 class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('id', 'phonenumber', 'name')
+        fields = ('id', 'phonenumber', 'first_name')
 
 
 class UserSerializerWithName(serializers.ModelSerializer):
