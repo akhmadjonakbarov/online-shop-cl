@@ -37,7 +37,7 @@ class AddProductView(GenericAPIView):
             user = request.user
             seller_category = SellerCategory.objects.get(id=request.data['sellerCategoryId'])
             product = Product.objects.create(
-                user=user, category=seller_category, name=request.data['name'],
+                user=user, seller_category=seller_category, name=request.data['name'],
                 description=request.data['description'],
                 price=request.data['price'], coverImage=request.data['coverImage']
             )
