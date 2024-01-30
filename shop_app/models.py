@@ -1,4 +1,6 @@
 from django.db import models
+
+from location_app.models import District, Region
 from user_app.models import CustomUser
 
 
@@ -15,7 +17,7 @@ class Category(models.Model):
 class Product(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name="set_products_user")
-    category = models.ForeignKey(
+    seller_category = models.ForeignKey(
         'SellerCategory', on_delete=models.CASCADE)
     name = models.CharField(max_length=250)
     description = models.TextField()
@@ -48,6 +50,14 @@ class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     total_sum = models.DecimalField(max_digits=10, decimal_places=2)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
+
+
+class OrderItemLocation(models.Model):
+    order_item = models.ForeignKey(OrderItem, on_delete=models.CASCADE)
+    region = models.ForeignKey(Region, on_delete=models.CASCADE)
+    district = models.ForeignKey(District, on_delete=models.CASCADE)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
 

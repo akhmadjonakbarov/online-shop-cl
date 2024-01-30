@@ -18,12 +18,12 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = _SellerCategorySerializer()
+    seller_category = _SellerCategorySerializer()
 
     class Meta:
         model = Product
         fields = (
-            'id', 'category', 'name',
+            'id', 'seller_category', 'name',
             'description', 'price', 'rating',
             'coverImage'
         )

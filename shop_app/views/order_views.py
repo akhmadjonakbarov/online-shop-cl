@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
 from shop_app.models import Product
-from shop_app.serializers.order_serializer import (OrderItemSerializer, OrderItem)
+from shop_app.serializers.order_serializer import (OrderItemSerializer, OrderItem, OrderItemLocation)
 from rest_framework import status
 
 from user_app.models import CustomUser
@@ -51,13 +51,21 @@ class AddOrderView(GenericAPIView):
         seller = CustomUser.objects.get(id=request.data['sellerId'], is_seller=True)
         product = Product.objects.get(id=request.data['productId'])
         total_sum = product.price * int(request.data['quantity'])
+
         order_item = OrderItem.objects.create(
             product_id=request.data['productId'], quantity=request.data['quantity'],
             total_sum=total_sum, user=user, seller=seller
         )
         order_item.save()
-        serializer = self.serializer_class(order_item)
-        return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_400_BAD_REQUEST)
+
+        order_item_location = OrderItemLocation.objects.create(
+            order_item=order_item, region_id=request.data['regionId'],
+            district_id=request.data['districtId']
+        )
+        order_item_location.save()
+
+        serializer = self.serializer_class(order_item, many=False)
+        return Response({'success': 'true', 'data': serializer.data}, status=status.HTTP_200_OK)
 
 
 class UpdateOrderView(GenericAPIView):

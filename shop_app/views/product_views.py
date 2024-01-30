@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from shop_app.serializers.product_serializer import (ProductSerializer, Product)
 from rest_framework import status
-from shop_app.models import Category
+from shop_app.models import Category, SellerCategory
 
 
 class ListProductsView(GenericAPIView):
@@ -35,9 +35,9 @@ class AddProductView(GenericAPIView):
     def post(self, request):
         try:
             user = request.user
-            category = Category.objects.get(id=request.data['categoryId'])
+            seller_category = SellerCategory.objects.get(id=request.data['sellerCategoryId'])
             product = Product.objects.create(
-                user=user, category=category, name=request.data['name'],
+                user=user, category=seller_category, name=request.data['name'],
                 description=request.data['description'],
                 price=request.data['price'], coverImage=request.data['coverImage']
             )
