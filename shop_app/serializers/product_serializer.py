@@ -3,6 +3,7 @@ from shop_app.models import (
     Review, SellerCategory
 )
 from rest_framework import serializers
+from user_app.serializers import UserSerializerWithName
 
 
 class _SellerCategorySerializer(serializers.ModelSerializer):
@@ -18,12 +19,12 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    # seller_category = _SellerCategorySerializer(read_only=True)
+    user = UserSerializerWithName(read_only=True)
 
     class Meta:
         model = Product
         fields = (
             'id', 'seller_category', 'name',
             'description', 'price', 'rating',
-            'coverImage'
+            'coverImage', 'user'
         )
