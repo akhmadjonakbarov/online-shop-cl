@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from banner_app.serializers import Banner, BannerSerializer
 from shop_app.serializers.category_serializer import Category, CategorySerializer, ProductSerializer, \
     SellerCategorySerializer, SellerCategory
+from shop_app.models import Product
 
 from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
@@ -12,13 +13,11 @@ from rest_framework import status
 class HomeView(APIView):
 
     def get(self, request):
-        products = []
+        products = Product.objects.all()
         sellers_categories = SellerCategory.objects.all()
-        seller_category_serializer = SellerCategorySerializer(sellers_categories, many=True)
         banners = Banner.objects.all()
+        seller_category_serializer = SellerCategorySerializer(sellers_categories, many=True)
         banner_serializer = BannerSerializer(banners, many=True)
-        for seller_category in sellers_categories:
-            products.append(seller_category.product_set.first())
         product_serializer = ProductSerializer(products, many=True)
 
         return Response(
